@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>
+      Create Application
+    </title>
+    <style>
+    body{
+      height: 150vh; 
+      display: flex;
+      flex-direction: column;
+      justify-content: center; 
+      align-items: stretch;
+      font-family: Tahoma;
+  }
+    .flex-container {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        justify-content: center;
+        align-items: center;
+        align-content: center;
+        gap: 4px;
+        background-color: rgb(192, 31, 31);
+    }
+    .from-div{
+      background-color: rgb(245, 255, 158);
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      border-radius: 18px;
+    }
+    .subject-div{
+      background-color: rgb(115, 13, 248);
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      border-radius: 18px;
+
+    }
+    .body-div{  
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      width: 100%;
+      background-color: black;
+      border-radius: 18px;
+      height: 200px;
+    }
+    
+    .body-text-area{
+      height: 150px;
+      font-size: 16px;
+      margin-left: 20px;
+      margin-right: 20px;
+    }
+    .from-input-box{
+      height: 40px;
+      font-size: 16px;
+      padding-left: 20px;
+      margin-left: 20px;
+      margin-right: 20px;
+    }
+    .subject-text-area
+    {
+      height: 40px;
+      font-size: 16px;
+      margin-left: 20px;
+      margin-right: 20px;
+    }
+    .label-from{
+      font-weight: 600;
+      color:rgb(118, 118, 118) ;
+      padding-left: 20px;
+      padding-top: 20px;
+    }
+    .label-subject{
+      font-weight: 600;
+      color:rgb(118, 118, 118) ;
+      padding-left: 20px;
+      padding-top: 20px;
+    }
+    
+    
+
+  
+      
+    </style>
+  </head>
+  <body>
+    <div class="flex-container">
+      <div class="from-div">
+        <label class="label-from">From :</label><br>
+        <input class="from-input-box" type="text" placeholder="Enter your name" id="name" ><br>
+        <input class="from-input-box" type="text" placeholder="Name of the department" id="department"><br>
+        <input class="from-input-box" type="number" placeholder="year of admission" id="year"><br>
+        <input class="from-input-box" type="email" placeholder="Enter your email" id="email"><br>
+        <input class="from-input-box" type="number" placeholder="Enter your phone number" id="phoneNumber"><br>
+      </div>
+
+      <div class="subject-div">
+        <label class="label-subject">Subject :</label><br>
+        <textarea class="subject-text-area" id="subject" name="subject" required></textarea><br>
+      </div>
+      <div class="body-div">
+        <textarea class="body-text-area" id="body" name="name"required></textarea>
+      </div>
+      
+       <div>
+        <button onclick="
+        submit();
+        " class="submit-button"> Submit
+        </button>
+       </div> 
+      
+    </div>
+    
+
+
+    <script>
+      function submit(){
+        
+        let name = document.getElementById("name").value;
+        let department = document.getElementById("department").value;
+        let year = document.getElementById("year").value;
+        let email = document.getElementById("email").value;
+        let phoneNumber = document.getElementById("phoneNumber").value;
+        let subject = document.getElementById("subject").value;
+        let body = document.getElementById("body").value;
+
+        if(!name || !department || !year || !email || !phoneNumber  || !subject || !body){
+          alert("Please fill all fields");
+        } else{
+          let apps = JSON.parse(localStorage.getItem("applications")) || [];
+
+          let newApp = {
+            id : Date.now(),
+            name,
+            department,
+            year,
+            email,
+            phoneNumber,
+            subject,
+            body,
+            status: "Pending"
+          };
+
+          apps.push(newApp);
+          localStorage.setItem("applications" , JSON.stringify(apps));
+          alert("Application Submitted");
+          };
+      }
+      
+
+    </script>
+  </body>
+</html>

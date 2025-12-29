@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>
+      Approved Letter
+    </title>
+   
+  </head>
+  <body>
+    <div id="approvedApplications"></div>
+    <div id="pdfContent" style="display:none"></div>
+
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">   
+     </script>
+
+
+
+    <script>
+      function loadApproved(){
+        let apps = JSON.parse(localStorage.getItem("applications")) || [];
+
+        let approved = apps.filter(app => app.status === "Approved");
+        
+        let container = document.getElementById("approvedApplications");
+        
+        if (approved.length === 0) {
+        container.innerHTML = "<p>No approved letters yet.</p>";
+        return;
+        }
+
+        container.innerHTML = approved.map((a, index) => `
+            <div style="border:1px solid #ccc; padding:10px; margin:10px;">
+            <p>From:</p>
+            <p>${a.name}</p>
+            <p>${a.department}</p>
+            <p>${a.year}</p>
+            <p>${a.email}</p>
+            <p>${a.phoneNumber}</p>
+                        
+            
+            <p>Subject: ${a.subject}</p>
+            
+            <p>${a.body}</p>
+            
+            <button onclick="downloadPDF(${index})">Download Approved Letter</button>
+            <hr>
+          </div>
+         
+        `
+        ).join("");
+      }
+      loadApproved();
+      
+     
+      function downloadPDF(index) {
+          
+        let apps = JSON.parse(localStorage.getItem("applications")) || [];
+        let approved = apps.filter(app => app.status === "Approved");
+        let a = approved[index]; 
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+
+        let content = `
+From:
+${a.name}
+${a.department}
+${a.year}
+${a.email}
+${a.phoneNumber}
+
+Subject:${a.subject}
+
+${a.body}
+     
+        `
+              let lines = doc.splitTextToSize(content, 180);
+              doc.text(lines, 10, 10);
+
+              let finalY = 10 + lines.length * 7;
+              let img = new Image();
+              img.src = "approval-image-1.png";
+              img.onload = function () {
+                const pageWidth = doc.internal.pageSize.getWidth();
+                const imgWidth = 50;
+                const imgHeight = 50;
+                const xPos = (pageWidth - imgWidth) / 2;
+                doc.addImage(img, "PNG", xPos,finalY + 10,imgWidth, imgHeight);
+
+                doc.save(`Approved_Letter_${a.name}.pdf`);
+              }
+      }
+
+
+    </script>
+  </body>
+</html>
