@@ -4,13 +4,157 @@
     <title>
       Approved Letter
     </title>
+    <style>
+      body{
+        font-family: Arial, Helvetica, sans-serif;
+        background-color: rgb(219, 219, 219);
+        color: rgb(70, 70, 70);
+        margin: 0px;
+      }
+      .approved-letter-div{
+        border:none;
+        padding:16px; 
+        margin-left:30px;
+        margin-right: 30px;
+        margin-top: 30px;
+        background-color: rgb(255, 255, 255);
+        border-radius: 18px;
+        position: relative;
+      }
+      .approved-letter-from,
+      .approved-letter-subject,
+      .approved-letter-body{
+        padding-left: 30px;
+        
+      }
+      .approved-letter-from-user{
+        padding-left:45px ;
+      }
+      .approved-download-button{
+        font-size: 13px;
+        margin-right: 40px;
+        padding: 10px;
+        border-radius: 4px;
+        border: none ;
+        background-color: oklch(0.511 0.262 276.966);
+        color: rgb(255, 255, 255);
+        cursor: pointer;
+        
+      }
+      .download-button-div{
+        display: flex;
+        justify-content: flex-end;
+      }
+      .status-div-approved,
+      .status-div-pending,
+      .status-div-rejected{
+        position: absolute;
+        top: 30px;
+        right: 56px;
+        font-weight: 600;
+        border: solid 1px black;
+        padding: 10px;
+        border-radius: 9px;
+        cursor: context-menu;
+      }
+      .status-div-approved{
+        color: green;
+       
+      }
+      .status-div-pending{
+        color: orange;
+
+      }
+      .status-div-rejected{
+        color: red;
+        
+      }
+      .status-tabs{
+      display: flex;
+      justify-content: center;
+      gap: 100px;
+      margin-top: 80px;
+      }
+      .messages{
+        margin-right: 30px;
+        min-height: 500px;
+        margin-left: 30px;
+        
+        
+        background-color:rgb(219, 219, 219);
+        
+      }
+      .tab{
+        cursor: pointer;
+        color: rgb(0, 0, 0);
+        
+      }
+      .header{
+        background-color: black;
+        display: flex;
+        height: 60px;
+        color: white;
+        align-items: center;
+        justify-content:space-around;
+        position: fixed;
+        right: 0;
+        left: 0;
+        top: 0px;
+        z-index: 200;
+      }
+      .home-text, .Dashboard-text{
+        cursor: pointer;
+      }
+
+      
+      
+
+
+    </style>
    
   </head>
-
   <body>
-    <h1>Approved Letters</h1>
-    <div id="approvedApplications"></div>
+
+    <div class="header">
+      <div class="home-text">
+        <a href="create-application.html"><p>Home</p></a>
+      </div>
+      <div class="Dashboard-text">
+         <a href="create-application.html"><p>Dashboard</p></a>
+          
+      </div>
+    </div>
+
+
+    <div class="status-tabs">
+      <div class="tab" onclick="showTab('pending')">
+        <p>Pending </p>
+      </div>
+      <div class="tab" onclick="showTab('approved')">
+        <p>Approved</p>
+      </div>
+      <div class="tab" onclick="showTab('rejected')">
+        <p>Rejected</p>
+      </div>
+    </div>
+
+    <div class="messages-area">
+      <div id="pending" class="messages">
+        
+      </div>
+      <div id="approved" class="messages">
+        
+      </div>
+      <div id="rejected" class="messages">
+        
+      </div>
+    </div>
+
+
+
     <div id="pdfContent" style="display:none"></div>
+    
+    
 
      <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">   
      </script>
@@ -23,35 +167,125 @@
 
         let approved = apps.filter(app => app.status === "Approved");
         
-        let container = document.getElementById("approvedApplications");
-        
+        let container = document.getElementById("approved");
+
         if (approved.length === 0) {
-        container.innerHTML = "<p>No approved letters yet.</p>";
+        container.innerHTML = `<p class="approved-letter-div">No approved letters .</p>`;
         return;
         }
+        
+        
 
         container.innerHTML = approved.map((a, index) => `
-            <div style="border:1px solid #ccc; padding:10px; margin:10px;">
-            <p>From:</p>
-            <p>${a.name}</p>
-            <p>${a.department}</p>
-            <p>${a.year}</p>
-            <p>${a.email}</p>
-            <p>${a.phoneNumber}</p>
+            <div class="approved-letter-div">
+            <p class="approved-letter-from"><strong>From:</strong></p>
+            <p class="approved-letter-from-user">${a.name}</p>
+            <p class="approved-letter-from-user">${a.department}</p>
+            <p class="approved-letter-from-user">${a.year}</p>
+            <p class="approved-letter-from-user">${a.email}</p>
+            <p class="approved-letter-from-user">${a.phoneNumber}</p>
+            <hr>
                         
             
-            <p>Subject: ${a.subject}</p>
+            <p class="approved-letter-subject"><strong>Subject:</strong> ${a.subject}</p>
             
-            <p>${a.body}</p>
             
-            <button onclick="downloadPDF(${index})">Download Approved Letter</button>
-            <hr>
+            <p class="approved-letter-body">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${a.body}</p>
+            <div class="status-div-approved">Approved</div>
+            <div class="download-button-div">
+            <button onclick="downloadPDF(${index})" class="approved-download-button">Download Approved Letter</button>
+            </div>
           </div>
          
         `
-        ).join("");
-      }
+         ).join("");
+      };
       loadApproved();
+      loadRejected();
+      loadPending();
+      
+      showTab('approved');
+      
+      function loadPending(){
+        let apps = JSON.parse(localStorage.getItem("applications")) || [];
+
+        let pending = apps.filter(app => app.status === "Pending" || !app.status);
+        
+        let container = document.getElementById("pending");
+
+        if (pending.length === 0) {
+        container.innerHTML = `<p class="approved-letter-div">No pending letters .</p>`;
+        return;
+        }
+
+         
+        
+        
+
+        container.innerHTML = pending.map((a, index) => `
+            <div class="approved-letter-div">
+            <p class="approved-letter-from"><strong>From:</strong></p>
+            <p class="approved-letter-from-user">${a.name}</p>
+            <p class="approved-letter-from-user">${a.department}</p>
+            <p class="approved-letter-from-user">${a.year}</p>
+            <p class="approved-letter-from-user">${a.email}</p>
+            <p class="approved-letter-from-user">${a.phoneNumber}</p>
+            <hr>
+             <p class="approved-letter-subject"><strong>Subject:</strong> ${a.subject}</p>
+            
+            
+            <p class="approved-letter-body">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${a.body}</p>
+            <div class="status-div-pending">Pending</div>
+           
+
+            </div>
+
+
+            `
+            
+            ).join("");
+
+
+      };
+
+
+
+      function loadRejected(){
+        let apps = JSON.parse(localStorage.getItem("applications")) || [];
+
+        let rejected = apps.filter(app => app.status === "Rejected");
+        
+        let container = document.getElementById("rejected");
+        
+        if (rejected.length === 0) {
+        container.innerHTML = `<p class="approved-letter-div">No rejected letters .</p>`;
+        return;
+        }
+        
+        
+
+        container.innerHTML = rejected.map((a, index) => `
+            <div class="approved-letter-div">
+            <p class="approved-letter-from"><strong>From:</strong></p>
+            <p class="approved-letter-from-user">${a.name}</p>
+            <p class="approved-letter-from-user">${a.department}</p>
+            <p class="approved-letter-from-user">${a.year}</p>
+            <p class="approved-letter-from-user">${a.email}</p>
+            <p class="approved-letter-from-user">${a.phoneNumber}</p>
+            <hr>
+             <p class="approved-letter-subject"><strong>Subject:</strong> ${a.subject}</p>
+            
+            
+            <p class="approved-letter-body">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${a.body}</p>
+            <div class="status-div-rejected">Rejected</div>
+
+            </div>
+
+            `
+            ).join("");
+      };
+
+
       
      
       function downloadPDF(index) {
@@ -94,7 +328,14 @@ ${a.body}
               }
       }
 
+      function showTab(tabId) {
+      const contents = document.querySelectorAll('.messages');
+      contents.forEach(item => item.style.display = 'none');
 
+      document.getElementById(tabId).style.display = 'block';
+      
+      }
+      
     </script>
   </body>
 </html>

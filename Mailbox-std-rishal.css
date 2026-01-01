@@ -1,0 +1,21 @@
+.Dashboard-header{
+  background-color: black;
+  color: white;
+}
+.status-tabs{
+  display: flex;
+  justify-content: center;
+  gap: 100px;
+}
+.messages{
+  width:700px;
+  min-height: 500px;
+  margin-left: 80px;
+  display: none;
+
+  background-color: rgb(248, 243, 243);
+  
+}
+.tab{
+  cursor: pointer;
+}

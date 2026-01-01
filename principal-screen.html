@@ -4,51 +4,125 @@
     <title>
       Principal Panel
     </title>
+
+    <style>
+      body{
+        font-family: Arial, Helvetica, sans-serif;
+        background-color: rgb(139, 139, 139);
+        color: rgb(70, 70, 70);
+      }
+      .principal-screen-div{
+        border:none;
+        padding:16px; 
+        margin-left:30px;
+        margin-right: 30px;
+        margin-top: 30px;
+        background-color: rgb(255, 255, 255);
+        border-radius: 18px;
+      }
+      .principal-screen-from,
+      .principal-screen-subject,
+      .principal-screen-body{
+        padding-left: 30px;
+        
+      }
+      .principal-screen-from-user{
+        padding-left:45px ;
+      }
+      .approve-reject-button-div{
+        display: flex;
+        justify-content: flex-end;
+        column-gap: 40px;
+      }
+      .reject-button{
+        margin-right: 40px;
+        padding: 7px 15px;
+        font-size: 13px;
+        border-radius: 4px;
+        border: none ;
+        background-color: oklch(44.52% 0.1827 29.223);
+        color: white;
+        cursor: pointer;
+      }
+      .approve-button{
+        padding: 7px 15px;
+        font-size: 13px;
+        border-radius: 4px;
+        border: none ;
+        background-color: oklch(57.426% 0.1854 140.658);
+        color: white;
+        cursor: pointer;
+      }
+      .principal-pending-div{
+        margin-top: 40px;
+        display: flex;
+        justify-content: center;
+        color: black;
+      }
+
+    </style>
   </head>
   <body>
-    <div id="applications"></div>
 
- 
+    <div id="applications"></div>
 
 
 <script>
-  let apps = JSON.parse(localStorage.getItem("applications")) || [];
-  let container = document.getElementById("applications");
-
   
+  
+  function renderPending(){
 
-   apps.forEach((a)=>{
-  container.innerHTML += `
-    <div>
-      <p>From:</p>
-      <p>${a.name}<p>
-      <p>${a.department}</p>
-      <p>${a.year}</p>
-      <p>${a.email}</p>
-      <p>${a.phoneNumber}</p>
-      <p>Subject: ${a.subject}</p>
-      <p>${a.body}</p>
-      
-      <button onclick="updateStatus(${a.id},'Approved')">Approve</button>
-      <button onclick="updateStatus(${a.id},'Rejected')">Reject</button>
-      <hr>
-    </div>
-      `
-      
-  });
 
+      let apps = JSON.parse(localStorage.getItem("applications")) || [];
+      let container = document.getElementById("applications");
+
+      let pending = apps.filter(a => a.status === "Pending" || !a.status);
+      container.innerHTML ="";
+
+      if (pending.length === 0){
+        container.innerHTML = `<div class="principal-pending-div">No pending letters.</div>`
+      };
+
+      pending.forEach(a =>{
+      container.innerHTML += `
+        <div class="principal-screen-div" id="app-${a.id}">
+          <p class="principal-screen-from"><strong>From:</strong></p>
+          <p class="principal-screen-from-user">${a.name}</p>
+          <p class="principal-screen-from-user">${a.department}</p>
+          <p class="principal-screen-from-user">${a.year}</p>
+          <p class="principal-screen-from-user">${a.email}</p>
+          <p class="principal-screen-from-user">${a.phoneNumber}</p>
+          <hr>
+          <p class="principal-screen-subject"><strong>Subject:</strong> ${a.subject}</p>
+          <p class="principal-screen-body">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${a.body}</p>
+          <div class="approve-reject-button-div">
+          <button onclick="updateStatus(${a.id},'Approved')" class="approve-button">Approve</button>
+          <button onclick="updateStatus(${a.id},'Rejected')" class="reject-button">Reject</button>
+          </div>
+        </div>
+          `
+          
+      });
+    }
+  
+    renderPending();
+  
 
 
   function updateStatus(id, status){
+    let apps = JSON.parse(localStorage.getItem("applications")) || [];
     apps = apps.map(app =>
       app.id === id ? {...app, status: status} : app
     );
 
     localStorage.setItem("applications", JSON.stringify(apps));
 
-    alert("Status Updated: " + status);
+    
+  alert("Application " + status);
+  
+  
+  renderPending();
 
-    location.reload();
   }
 
 
@@ -56,4 +130,4 @@
 
 </script>
  </body>
-</html>
+</html> 
