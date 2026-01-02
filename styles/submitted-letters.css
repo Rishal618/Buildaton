@@ -1,8 +1,11 @@
+
+
+
 body{
         font-family: Arial, Helvetica, sans-serif;
         background-color: rgb(219, 219, 219);
         color: rgb(70, 70, 70);
-        margin: 0px;
+        
       }
       .approved-letter-div{
         border:none;
@@ -18,7 +21,7 @@ body{
       .approved-letter-subject,
       .approved-letter-body{
         padding-left: 30px;
-        
+        padding-top: 20px;
       }
       .approved-letter-from-user{
         padding-left:45px ;
@@ -82,19 +85,7 @@ body{
         color: rgb(0, 0, 0);
         
       }
-      .header{
-        background-color: rgb(0, 0, 0);
-        display: flex;
-        height: 60px;
-        color: white;
-        align-items: center;
-        justify-content:space-around;
-        position: fixed;
-        right: 0;
-        left: 0;
-        top: 0px;
-        z-index: 200;
-      }
+      
       .home-text, .Dashboard-text{
         cursor: pointer;
       }
