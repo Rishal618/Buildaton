@@ -51,6 +51,9 @@ function updateStatus(id, action) {
       container.innerHTML = "<p>No applications available.</p>";
   } 
   }
+
+
+  if (typeof loadPrincipalHistory === "function") { loadPrincipalHistory(); }
 }
 
 

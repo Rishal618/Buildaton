@@ -156,8 +156,8 @@
       cursor: pointer;
     }
     .continue-application{ 
-      margin-top: 100px;
-      margin-bottom: 20px;
+      margin-top: 20px;
+      margin-bottom: 0px;
     }
     .request-button-div{
       display: flex;
@@ -367,3 +367,104 @@
       --pbd: .15s;
       --pex: -24px;
     }
+
+
+
+
+
+
+
+    /* Button Base */
+.continue-application {
+  --color: #fff;
+  --background: #404660;
+  --background-hover: #3A4059;
+  --background-left: #2B3044;
+  --eye-outline: #F3E9CB;
+  --eye-iris: #50cfe9;
+
+  border: none;
+  cursor: pointer;
+  position: relative;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 17px 29px 17px 69px;
+  color: var(--color);
+  background: var(--background);
+  transition: background 0.3s ease;
+}
+
+/* Left Icon Box */
+.continue-application .icon-box {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 53px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--background-left);
+  border-radius: 5px 0 0 5px;
+}
+
+/* Eye Icon */
+.eye-icon {
+  width: 26px;
+  height: 26px;
+}
+
+/* Eye Outline */
+.eye-outline {
+  stroke: var(--eye-outline);
+  stroke-width: 3;
+  fill: none;
+}
+
+/* Iris */
+.eye-iris {
+  fill: var(--eye-iris);
+  transition: transform 0.3s ease;
+  transform-origin: center;
+}
+
+/* Arrow Indicator */
+.continue-application::before,
+.continue-application::after {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 2px;
+  background: var(--color);
+  top: 26px;
+  right: 16px;
+  transform-origin: 9px 1px;
+  transition: transform 0.3s ease;
+}
+
+.continue-application::before {
+  transform: rotate(-45deg);
+}
+
+.continue-application::after {
+  transform: rotate(45deg);
+}
+
+/* Hover Effects */
+.continue-application:hover {
+  background: var(--background-hover);
+}
+
+.continue-application:hover::before {
+  transform: translateX(2px) rotate(-45deg);
+}
+
+.continue-application:hover::after {
+  transform: translateX(2px) rotate(45deg);
+}
+
+/* Eye Interaction (NO overlay) */
+.continue-application:hover .eye-iris {
+  transform: scale(1.3);
+}
