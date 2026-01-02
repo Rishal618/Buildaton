@@ -1,0 +1,54 @@
+body{
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: rgb(139, 139, 139);
+  color: rgb(70, 70, 70);
+}
+
+.principal-screen-div{
+  border:none;
+  padding:16px; 
+  margin-left:30px;
+  margin-right: 30px;
+  margin-top: 30px;
+  background-color: rgb(255, 255, 255);
+  border-radius: 18px;
+}
+.principal-screen-from,
+.principal-screen-subject,
+.principal-screen-body{
+  padding-left: 30px;
+  
+}
+.principal-screen-from-user{
+  padding-left:45px ;
+}
+.approve-reject-button-div{
+  display: flex;
+  justify-content: flex-end;
+  column-gap: 40px;
+}
+.reject-button{
+  margin-right: 40px;
+  padding: 7px 15px;
+  font-size: 13px;
+  border-radius: 4px;
+  border: none ;
+  background-color: oklch(44.52% 0.1827 29.223);
+  color: white;
+  cursor: pointer;
+}
+.approve-button{
+  padding: 7px 15px;
+  font-size: 13px;
+  border-radius: 4px;
+  border: none ;
+  background-color: oklch(57.426% 0.1854 140.658);
+  color: white;
+  cursor: pointer;
+}
+.principal-pending-div{
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+  color: black;
+}
