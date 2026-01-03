@@ -52,7 +52,8 @@ function updateStatus(id, action) {
   } 
   }
 
-
+  if (typeof loadHODHistory === "function") { loadHODHistory(); }
+  if (typeof loadAdvisorHistory === "function") { loadAdvisorHistory(); }
   if (typeof loadPrincipalHistory === "function") { loadPrincipalHistory(); }
 }
 

@@ -4,6 +4,7 @@
     <title>Advisor Screen</title>
     <link rel="stylesheet" type="text/css" href="styles/principal-screen.css">
     <link rel="stylesheet" type="text/css" href="styles/navbar.css">
+    <link rel="stylesheet" type="text/css" href="styles/submitted-letters.css">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -37,7 +38,7 @@
         </ul>
     </nav>
 
-    <div class="status-tabs-principal"> 
+    <div class="status-tabs"> 
       <div class="tab tab-pending" onclick="showTab('pending')">
         <p>Pending</p>
       </div>
@@ -75,7 +76,92 @@
             const sideBar = document.querySelector('.side-bar');
             sideBar.style.display = 'none';
         }
-      renderApplications("Advisor", "applications");
+
+        function loadAdvisorHistory() {
+    let apps = JSON.parse(localStorage.getItem("applications")) || [];;
+
+    let pending = apps.filter(app => app.stage === "Advisor" && app.status === "Pending" );
+        
+        document.getElementById("pending").innerHTML = pending.length === 0 ? "<p>No pending letters.</p>" : pending.map(a => `
+            <div class="approved-letter-div">
+            <p class="approved-letter-from"><strong>From:</strong></p><br>
+            <p class="approved-letter-from-user">${a.name}</p><br>
+            <p class="approved-letter-from-user">${a.department} &nbsp; ${a.year}</p><br>
+            <p class="approved-letter-from-user">${a.email}</p><br>
+            <p class="approved-letter-from-user">${a.phoneNumber}</p><br>
+            <hr>
+             <p class="approved-letter-subject"><strong>Subject:</strong> ${a.subject}</p>
+            
+            
+            <p class="approved-letter-body">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${a.body}</p>
+            <div class="status-div-pending">Pending</div>
+            <div class="approve-reject-button-div">
+              <button onclick="updateStatus(${a.id}, 'Approved')" class="approve-button">Send to HOD</button>
+              <button onclick="updateStatus(${a.id}, 'Rejected')" class="reject-button">Reject</button>
+            </div>
+
+            </div>
+
+
+            `
+            
+            ).join("");
+
+
+        let rejected = apps.filter(app => app.stage === "completed" && app.status === "Rejected" && app.rejectedAtStage === "Advisor");
+        
+        document.getElementById("rejected").innerHTML = rejected.length === 0 ? "<p>No rejected letters.</p>" : 
+        rejected.map(a => `
+           <div class="approved-letter-div">
+            <p class="approved-letter-from"><strong>From:</strong></p><br>
+            <p class="approved-letter-from-user">${a.name}</p><br>
+            <p class="approved-letter-from-user">${a.department} &nbsp; ${a.year}</p><br>
+            <p class="approved-letter-from-user">${a.email}</p><br>
+            <p class="approved-letter-from-user">${a.phoneNumber}</p><br>
+            <hr>
+             <p class="approved-letter-subject"><strong>Subject:</strong> ${a.subject}</p>
+            
+            
+            <p class="approved-letter-body">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${a.body}</p>
+            
+            <div class="status-div-rejected">Rejected</div>
+            </div>
+
+            `
+            ).join("");
+
+
+            let approved = apps.filter(app => app.stage === "HOD" && app.status === "Pending"); 
+            document.getElementById("approved").innerHTML = approved.length === 0 ? "<p>No approved letters.</p>" : 
+            approved.map(a => `<div class="approved-letter-div">
+            <p class="approved-letter-from"><strong>From:</strong></p><br>
+            <p class="approved-letter-from-user">${a.name}</p><br>
+            <p class="approved-letter-from-user">${a.department} &nbsp; ${a.year}</p><br>
+            <p class="approved-letter-from-user">${a.email}</p><br>
+            <p class="approved-letter-from-user">${a.phoneNumber}</p><br>
+            <hr>
+             <p class="approved-letter-subject"><strong>Subject:</strong> ${a.subject}</p>
+            
+            
+            <p class="approved-letter-body">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${a.body}</p>
+            
+            <div class="status-div-approved">Approved</div>
+            </div>
+
+            `
+            ).join("");
+      
+  }
+function showTab(tabId) { document.querySelectorAll('.messages').forEach(div => div.style.display = 'none'); 
+  document.getElementById(tabId).style.display = 'block'; 
+  }
+      
+
+  loadAdvisorHistory();
+      showTab('pending');
+
+
+  
       
     </script>
   </body>

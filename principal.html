@@ -4,15 +4,47 @@
     <title>
       Principal Panel
     </title>
-
+    <link rel="stylesheet" type="text/css" href="styles/navbar.css">
     <link rel="stylesheet" type="text/css" href="styles/principal-screen.css">
     <link rel="stylesheet" type="text/css" href="styles/submitted-letters.css">
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
   </head>
   <body>
 
 
 
-    <div class="status-tabs-principal"> 
+    <nav>
+        <ul class="side-bar">
+            <li onclick=hideSidebar()><a href="#"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg></a></li>
+            
+            <li><a href="#">About</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="login.html">Log out</a></li>
+        </ul>
+        <ul class="header">
+            <li><a href="#">
+              <div class="logo-text-div">
+                  Requesta
+                  <div class="logo-image-div"><img src="requesta-logo-navbar.png" style="width: 120px;"></div>
+                </div>
+              </a>
+            </li>
+            
+            <li class="hideOnmobile"><a href="#">About</a></li>
+            <li class="hideOnmobile"><a href="#">Contact</a></li>
+            <li onclick=showSidebar()><a href="#"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/></svg></a></li>
+        </ul>
+    </nav>
+
+    <div class="status-tabs"> 
       <div class="tab tab-pending" onclick="showTab('pending')">
         <p>Pending</p>
       </div>
@@ -41,12 +73,18 @@
 
 <script src="js/work-flow.js"></script>
 <script>
-  
+  function showSidebar() {
+            const sideBar = document.querySelector('.side-bar');
+            sideBar.style.display = 'flex';
+        }
+        function hideSidebar() {
+            const sideBar = document.querySelector('.side-bar');
+            sideBar.style.display = 'none';
+        }
   
   
   function loadPrincipalHistory() {
-    let apps = JSON.parse(localStorage.getItem("applications")) || [];;
-
+    let apps = JSON.parse(localStorage.getItem("applications")) || [];
     let pending = apps.filter(app => app.stage === "Principal" && app.status === "Pending" );
         
         document.getElementById("pending").innerHTML = pending.length === 0 ? "<p>No pending letters.</p>" : pending.map(a => `
