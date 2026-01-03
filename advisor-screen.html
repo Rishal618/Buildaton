@@ -37,7 +37,29 @@
         </ul>
     </nav>
 
+    <div class="status-tabs-principal"> 
+      <div class="tab tab-pending" onclick="showTab('pending')">
+        <p>Pending</p>
+      </div>
+      <div class="tab" onclick="showTab('approved')">
+        <p>Approved</p>
+      </div>
+      <div class="tab" onclick="showTab('rejected')">
+        <p>Rejected</p>
+      </div>
+    </div>
 
+    <div class="messages-area">
+      <div id="pending" class="messages">
+        
+      </div>
+      <div id="approved" class="messages">
+        
+      </div>
+      <div id="rejected" class="messages">
+        
+      </div>
+    </div>
 
 
     <div id="applications"></div>
