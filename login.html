@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login</title>
+  <style>
+    body{
+      margin: 0;
+      height: 100vh; 
+      display: flex;
+      justify-content: center; 
+      align-items: center;
+      background-color: rgb(209, 226, 232);
+      font-size: 16px;
+      font-family: Tahoma;
+      color: oklch(48.579% 0.0396 259.379);
+    }
+
+    .heading{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      line-height: 19px;
+      margin-bottom: 32px;
+    }
+
+    .main-heading{
+      font-size: 24px;
+      color: black;
+    }
+
+    .sub-heading{
+      margin: 0;
+    }
+
+    .email-input-box{
+    
+
+    }
+
+    .email-input-box,
+    .password-input-box{
+      padding: 12px 8px;
+      font-size: 16px;
+      width: 384px;
+      border: 1px solid oklch(90.374% 0.00431 271.367);
+      border-radius: 8px;
+    }
+
+    .email-div,
+    .password-div{
+      margin-bottom: 24px;
+    }
+
+    .email-label,
+    .password-label{
+      margin-bottom: 8px;
+    }
+
+    .sign-in-button{
+      padding: 12px;
+      width: 364px;
+      font-size: 16px;
+      background-color: black;
+      border-radius: 8px;
+      border: none;
+      color: white;
+      cursor: pointer;
+    }
+
+    .form-space{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .logo-container{
+      width: 200px;
+      height: 100px;
+      margin-top: 20px;
+    }
+
+    .logo-image{
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div>
+
+    <div class="heading">
+      <div class="logo-container">
+        <img class="logo-image" src="requesta-image-1.png" alt="Requesta Logo">
+      </div>
+      <p class="sub-heading">Sign in to your account</p>
+    </div>
+
+    <form class="form-space" action="">
+
+      <div class="email-div">
+        <label class="email-label" for="email">Email</label><br>
+        <input id="email" type="email" placeholder="Enter your email" class="email-input-box" required>
+      </div>
+
+      <div class="password-div">
+        <label class="password-label" for="password">Password</label><br>
+        <input id="password" type="password" placeholder="Enter your password" class="password-input-box" required>
+      </div>
+
+      <button type="button" class="sign-in-button" onclick="login()">
+        Sign in
+      </button>
+
+    </form>
+
+  </div>
+
+  <script>
+    function login() {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      if (!email || !password) {
+        alert("Please enter email and password");
+        return;
+      }
+
+      const STAFF_PASSWORD = "staff@123";
+      
+      if (email === "advisor@college.edu" && password === STAFF_PASSWORD) {
+        localStorage.setItem("role", "advisor");
+        localStorage.setItem("email", email);
+        window.location.href = "advisor-screen.html";
+      }
+      else if (email === "hod@college.edu" && password === STAFF_PASSWORD) {
+        localStorage.setItem("role", "hod");
+        localStorage.setItem("email", email);
+        window.location.href = "HOD-screen.html";
+      }
+      else if (email === "principal@college.edu" && password === STAFF_PASSWORD) {
+        localStorage.setItem("role", "principal");
+        localStorage.setItem("email", email);
+        window.location.href = "principal.html";
+      }
+      else {
+        localStorage.setItem("role", "student");
+        localStorage.setItem("email", email);
+        window.location.href = "home-page-main.html";
+      }
+    }
+  </script>
+
+
+</body>
+</html>

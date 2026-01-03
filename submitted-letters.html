@@ -30,12 +30,13 @@
     <nav>
         <ul class="side-bar">
             <li onclick=hideSidebar()><a href="#"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg></a></li>
-            <li><a href="create-application.html">Home</a></li>
+            <li><a href="home-page-main.html">Home</a></li>
             <li><a href="#">About</a></li>
             <li><a href="#">Contact</a></li>
+            <li><a href="login.html">Log out</a></li>
         </ul>
         <ul>
-            <li><a href="create-application.html">
+            <li><a href="home-page-main.html">
               
                 
                 <div class="logo-text-div">
@@ -48,7 +49,7 @@
               
 
             </a></li>
-            <li class="hideOnmobile"><a href="create-application.html">Home</a></li>
+            <li class="hideOnmobile"><a href="home-page-main.html">Home</a></li>
             <li class="hideOnmobile"><a href="#">About</a></li>
             <li class="hideOnmobile"><a href="#">Contact</a></li>
             <li onclick=showSidebar()><a href="#"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/></svg></a></li>
@@ -56,8 +57,8 @@
     </nav>
 
 
-    <div class="status-tabs">
-      <div class="tab" onclick="showTab('pending')">
+    <div class="status-tabs ">
+      <div class="tab tab-pending" onclick="showTab('pending')">
         <p>Pending</p>
       </div>
       <div class="tab" onclick="showTab('approved')">
@@ -108,12 +109,11 @@
 
         container.innerHTML = approved.map((a, index) => `
             <div class="approved-letter-div">
-            <p class="approved-letter-from"><strong>From:</strong></p>
-            <p class="approved-letter-from-user">${a.name}</p>
-            <p class="approved-letter-from-user">${a.department}</p>
-            <p class="approved-letter-from-user">${a.year}</p>
-            <p class="approved-letter-from-user">${a.email}</p>
-            <p class="approved-letter-from-user">${a.phoneNumber}</p>
+            <p class="approved-letter-from"><strong>From:</strong></p><br>
+            <p class="approved-letter-from-user">${a.name}</p><br>
+            <p class="approved-letter-from-user">${a.department} &nbsp; ${a.year}</p><br>
+            <p class="approved-letter-from-user">${a.email}</p><br>
+            <p class="approved-letter-from-user">${a.phoneNumber}</p><br>
             <hr>
                         
             
@@ -154,12 +154,11 @@
 
         container.innerHTML = pending.map((a, index) => `
             <div class="approved-letter-div">
-            <p class="approved-letter-from"><strong>From:</strong></p>
-            <p class="approved-letter-from-user">${a.name}</p>
-            <p class="approved-letter-from-user">${a.department}</p>
-            <p class="approved-letter-from-user">${a.year}</p>
-            <p class="approved-letter-from-user">${a.email}</p>
-            <p class="approved-letter-from-user">${a.phoneNumber}</p>
+            <p class="approved-letter-from"><strong>From:</strong></p><br>
+            <p class="approved-letter-from-user">${a.name}</p><br>
+            <p class="approved-letter-from-user">${a.department} &nbsp; ${a.year}</p><br>
+            <p class="approved-letter-from-user">${a.email}</p><br>
+            <p class="approved-letter-from-user">${a.phoneNumber}</p><br>
             <hr>
              <p class="approved-letter-subject"><strong>Subject:</strong> ${a.subject}</p>
             
@@ -196,12 +195,11 @@
 
         container.innerHTML = rejected.map((a, index) => `
             <div class="approved-letter-div">
-            <p class="approved-letter-from"><strong>From:</strong></p>
-            <p class="approved-letter-from-user">${a.name}</p>
-            <p class="approved-letter-from-user">${a.department}</p>
-            <p class="approved-letter-from-user">${a.year}</p>
-            <p class="approved-letter-from-user">${a.email}</p>
-            <p class="approved-letter-from-user">${a.phoneNumber}</p>
+            <p class="approved-letter-from"><strong>From:</strong></p><br>
+            <p class="approved-letter-from-user">${a.name}</p><br>
+            <p class="approved-letter-from-user">${a.department} &nbsp; ${a.year}</p><br>
+            <p class="approved-letter-from-user">${a.email}</p><br>
+            <p class="approved-letter-from-user">${a.phoneNumber}</p><br>
             <hr>
              <p class="approved-letter-subject"><strong>Subject:</strong> ${a.subject}</p>
             
@@ -216,47 +214,77 @@
       };
 
 
-      
-     
       function downloadPDF(index) {
-          
-        let apps = JSON.parse(localStorage.getItem("applications")) || [];
-        let approved = apps.filter(app => app.status === "Approved");
-        let a = approved[index]; 
+          let apps = JSON.parse(localStorage.getItem("applications")) || [];
 
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
+          let approved = apps.filter(
+            app => app.stage === "completed" && app.status === "Approved"
+          );
 
+          let a = approved[index];
+          if (!a) {
+            alert("Letter not found");
+            return;
+          }
 
-        let content = `
-From:
-${a.name}
-${a.department}
-${a.year}
-${a.email}
-${a.phoneNumber}
+          const { jsPDF } = window.jspdf;
+          const doc = new jsPDF();
 
-Subject:${a.subject}
+          // ===== HEADER =====
+          doc.setFont("times", "bold");
+          doc.setFontSize(18);
+          doc.text("APPROVAL LETTER", 105, 20, { align: "center" });
 
-${a.body}
+          doc.setLineWidth(0.5);
+          doc.line(20, 25, 190, 25);
+
+          // ===== DATE =====
+          doc.setFont("times", "normal");
+          doc.setFontSize(11);
+          doc.text(`Date: ${new Date().toLocaleDateString()}`, 150, 35);
+
+          // ===== FROM DETAILS =====
+          doc.setFontSize(12);
+          doc.setFont("times", "bold");
+          doc.text("From:", 20, 50);
+
+          doc.setFont("times", "normal");
+          doc.text(a.name, 20, 58);
+          doc.text(a.department, 20, 65);
+          doc.text(a.year, 20, 72);
+          doc.text(a.email, 20, 79);
+          doc.text(a.phoneNumber, 20, 86);
+
+          // ===== SUBJECT =====
+          doc.setFont("times", "bold");
+          doc.text("Subject:", 20, 100);
+          doc.setFont("times", "normal");
+          doc.text(a.subject, 40, 100);
+
+          // ===== BODY =====
+          let bodyText = doc.splitTextToSize(a.body, 170);
+          doc.text(bodyText, 20, 115);
+
+          // ===== APPROVAL IMAGE (STAMP / SEAL) =====
+          const img = new Image();
+          img.src = "approval-image-1.png"; // make sure this path exists
+
+          img.onload = function () {
+            // fixed position near bottom-right
+            const pageHeight = doc.internal.pageSize.getHeight();
+            doc.addImage(img, "PNG", 130, pageHeight - 100, 50, 50);
+            doc.save(`Approved_Letter_${a.name}.pdf`);
+          };
+
+          img.onerror = function () {
+            // fallback if image not found
+            doc.setFontSize(10);
+            doc.text("APPROVED", 150, finalY + 20);
+            doc.save(`Approved_Letter_${a.name}.pdf`);
+          };
+        }
      
-        `
-              let lines = doc.splitTextToSize(content, 180);
-              doc.text(lines, 10, 10);
-
-              let finalY = 10 + lines.length * 7;
-              let img = new Image();
-              img.src = "approval-image-1.png";
-              img.onload = function () {
-                const pageWidth = doc.internal.pageSize.getWidth();
-                const imgWidth = 50;
-                const imgHeight = 50;
-                const xPos = (pageWidth - imgWidth) / 2;
-                doc.addImage(img, "PNG", xPos,finalY + 10,imgWidth, imgHeight);
-
-                doc.save(`Approved_Letter_${a.name}.pdf`);
-              }
-      }
+      
 
       function showTab(tabId) {
       const contents = document.querySelectorAll('.messages');

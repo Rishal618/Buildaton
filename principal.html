@@ -10,8 +10,10 @@
   </head>
   <body>
 
-    <div class="status-tabs">
-      <div class="tab" onclick="showTab('pending')">
+
+
+    <div class="status-tabs-principal"> 
+      <div class="tab tab-pending" onclick="showTab('pending')">
         <p>Pending</p>
       </div>
       <div class="tab" onclick="showTab('approved')">
@@ -49,12 +51,11 @@
         
         document.getElementById("pending").innerHTML = pending.length === 0 ? "<p>No pending letters.</p>" : pending.map(a => `
             <div class="approved-letter-div">
-            <p class="approved-letter-from"><strong>From:</strong></p>
-            <p class="approved-letter-from-user">${a.name}</p>
-            <p class="approved-letter-from-user">${a.department}</p>
-            <p class="approved-letter-from-user">${a.year}</p>
-            <p class="approved-letter-from-user">${a.email}</p>
-            <p class="approved-letter-from-user">${a.phoneNumber}</p>
+            <p class="approved-letter-from"><strong>From:</strong></p><br>
+            <p class="approved-letter-from-user">${a.name}</p><br>
+            <p class="approved-letter-from-user">${a.department} &nbsp; ${a.year}</p><br>
+            <p class="approved-letter-from-user">${a.email}</p><br>
+            <p class="approved-letter-from-user">${a.phoneNumber}</p><br>
             <hr>
              <p class="approved-letter-subject"><strong>Subject:</strong> ${a.subject}</p>
             
@@ -79,12 +80,11 @@
         document.getElementById("rejected").innerHTML = rejected.length === 0 ? "<p>No rejected letters.</p>" : 
         rejected.map(a => `
            <div class="approved-letter-div">
-            <p class="approved-letter-from"><strong>From:</strong></p>
-            <p class="approved-letter-from-user">${a.name}</p>
-            <p class="approved-letter-from-user">${a.department}</p>
-            <p class="approved-letter-from-user">${a.year}</p>
-            <p class="approved-letter-from-user">${a.email}</p>
-            <p class="approved-letter-from-user">${a.phoneNumber}</p>
+            <p class="approved-letter-from"><strong>From:</strong></p><br>
+            <p class="approved-letter-from-user">${a.name}</p><br>
+            <p class="approved-letter-from-user">${a.department} &nbsp; ${a.year}</p><br>
+            <p class="approved-letter-from-user">${a.email}</p><br>
+            <p class="approved-letter-from-user">${a.phoneNumber}</p><br>
             <hr>
              <p class="approved-letter-subject"><strong>Subject:</strong> ${a.subject}</p>
             
@@ -101,12 +101,11 @@
             let approved = apps.filter(app => app.stage === "completed" && app.status === "Approved"); 
             document.getElementById("approved").innerHTML = approved.length === 0 ? "<p>No approved letters.</p>" : 
             approved.map(a => `<div class="approved-letter-div">
-            <p class="approved-letter-from"><strong>From:</strong></p>
-            <p class="approved-letter-from-user">${a.name}</p>
-            <p class="approved-letter-from-user">${a.department}</p>
-            <p class="approved-letter-from-user">${a.year}</p>
-            <p class="approved-letter-from-user">${a.email}</p>
-            <p class="approved-letter-from-user">${a.phoneNumber}</p>
+            <p class="approved-letter-from"><strong>From:</strong></p><br>
+            <p class="approved-letter-from-user">${a.name}</p><br>
+            <p class="approved-letter-from-user">${a.department} &nbsp; ${a.year}</p><br>
+            <p class="approved-letter-from-user">${a.email}</p><br>
+            <p class="approved-letter-from-user">${a.phoneNumber}</p><br>
             <hr>
              <p class="approved-letter-subject"><strong>Subject:</strong> ${a.subject}</p>
             

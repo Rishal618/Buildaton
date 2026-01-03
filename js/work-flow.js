@@ -48,7 +48,7 @@ function updateStatus(id, action) {
     appDiv.remove(); 
     const container = document.getElementById("applications"); 
     if (container && container.children.length === 0) { 
-      container.innerHTML = "<p>No applications available.</p>";
+      container.innerHTML = "<p class=\"no-applications\">No applications available.</p>";
   } 
   }
 
@@ -66,20 +66,20 @@ function renderApplications(stage, containerId) {
   const stageApps = apps.filter(a => a.stage === stage);
 
   if (stageApps.length === 0) {
-    container.innerHTML = "<p>No applications available.</p>";
+    container.innerHTML = "<div class=\"no-applications\">No applications available.</div>";
     return;
   }
 
   container.innerHTML = stageApps.map(a => `
     <div class="principal-screen-div" id="app-${a.id}">
-            <p class="principal-screen-from"><strong>From:</strong></p>
-            <p class="principal-screen-from-user">${a.name}</p>
-            <p class="principal-screen-from-user">${a.department}</p>
-            <p class="principal-screen-from-user">${a.year}</p>
-            <p class="principal-screen-from-user">${a.email}</p>
-            <p class="principal-screen-from-user">${a.phoneNumber}</p>
-            <hr>
-            <p class="principal-screen-subject"><strong>Subject:</strong> ${a.subject}</p>
+            <p class="principal-screen-from"><strong>From:</strong></p><br>
+            <p class="principal-screen-from-user">${a.name}</p><br>
+            <p class="principal-screen-from-user">${a.department} &nbsp; ${a.year}</p><br>
+            
+            <p class="principal-screen-from-user">${a.email}</p><br>
+            <p class="principal-screen-from-user">${a.phoneNumber}</p><br>
+            <hr><br>
+            <p class="principal-screen-subject"><strong>Subject:</strong> ${a.subject}</p><br>
             <p class="principal-screen-body">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${a.body}</p>
           <div class="approve-reject-button-div">
             <button onclick="updateStatus(${a.id}, 'Approved')" class="approve-button">
