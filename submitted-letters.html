@@ -57,7 +57,11 @@
     </nav>
 
 
-    <div class="status-tabs ">
+    
+
+    
+    <div class="tab-main">
+      <div class="status-tabs ">
       <div class="tab tab-pending" onclick="showTab('pending')">
         <p>Pending</p>
       </div>
@@ -68,6 +72,7 @@
         <p>Rejected</p>
       </div>
     </div>
+    
 
     <div class="messages-area">
       <div id="pending" class="messages">
@@ -84,8 +89,7 @@
 
 
     <div id="pdfContent" style="display:none"></div>
-    
-    
+    </div> 
     <script src="/js/work-flow.js"></script>
      <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">   
      </script>
@@ -93,207 +97,206 @@
 
 
     <script>
-      function loadApproved(){
-        let apps = JSON.parse(localStorage.getItem("applications")) || [];
+async function loadApplications() {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("Please login first");
+    return;
+  }
 
-        let approved = apps.filter(app => app.stage === "completed" && app.status === "Approved");
-        
-        let container = document.getElementById("approved");
+  try {
+    const resp = await fetch("http://localhost:4000/api/applications", {
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+    const apps = await resp.json();
 
-        if (approved.length === 0) {
-        container.innerHTML = `<p class="approved-letter-div">No approved letters .</p>`;
-        return;
-        }
-        
-        
+    loadApproved(apps);
+    loadPending(apps);
+    loadRejected(apps);
 
-        container.innerHTML = approved.map((a, index) => `
-            <div class="approved-letter-div">
-            <p class="approved-letter-from"><strong>From:</strong></p><br>
-            <p class="approved-letter-from-user">${a.name}</p><br>
-            <p class="approved-letter-from-user">${a.department} &nbsp; ${a.year}</p><br>
-            <p class="approved-letter-from-user">${a.email}</p><br>
-            <p class="approved-letter-from-user">${a.phoneNumber}</p><br>
-            <hr>
-                        
-            
-            <p class="approved-letter-subject"><strong>Subject:</strong> ${a.subject}</p>
-            
-            
-            <p class="approved-letter-body">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${a.body}</p>
-            <div class="status-div-approved">Approved</div>
-            <div class="download-button-div">
-            <button onclick="downloadPDF(${index})" class="approved-download-button">Download Approved Letter</button>
-            </div>
-          </div>
-         
-        `
-         ).join("");
-      };
-      loadApproved();
-      loadRejected();
-      loadPending();
-      
-      showTab('approved');
-      
-      function loadPending(){
-        let apps = JSON.parse(localStorage.getItem("applications")) || [];
+    showTab("pending"); // default tab
+  } catch (err) {
+    console.error("Error loading applications:", err);
+    alert("Failed to load applications");
+  }
+}
 
-        let pending = apps.filter(app => app.stage === "Advisor" || app.stage === "HOD" || app.stage === "Principal" );
-        
-        let container = document.getElementById("pending");
+function loadApproved(apps) {
+  const approved = apps.filter(app => app.status === "approved");
+  const container = document.getElementById("approved");
 
-        if (pending.length === 0) {
-        container.innerHTML = `<p class="approved-letter-div">No pending letters .</p>`;
-        return;
-        }
+  if (approved.length === 0) {
+    container.innerHTML = `<p class="approved-letter-div">No approved letters.</p>`;
+    return;
+  }
 
-         
-        
-        
+  container.innerHTML = approved.map((a, index) => `
+    <div class="approved-letter-div">
+      <p><strong>From:</strong><br><br> ${a.name}</p>
+      <p>${a.department} &nbsp; ${a.year}</p>
+      <p>${a.studentEmail}</p>
+      <p>${a.phoneNumber}</p><br>
+      <hr><br>
+      <p><strong>Subject:</strong> ${a.subject}</p>
+      <p class="approved-letter-body">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;${a.content}</p>
+      <div class="status-div-approved">Approved</div>
+      <div class="download-button-div">
+        <button onclick="downloadPDF(${index}, 'approved')" class="approved-download-button">Download Approved Letter</button>
+      </div>
+    </div>
+  `).join("");
+}
 
-        container.innerHTML = pending.map((a, index) => `
-            <div class="approved-letter-div">
-            <p class="approved-letter-from"><strong>From:</strong></p><br>
-            <p class="approved-letter-from-user">${a.name}</p><br>
-            <p class="approved-letter-from-user">${a.department} &nbsp; ${a.year}</p><br>
-            <p class="approved-letter-from-user">${a.email}</p><br>
-            <p class="approved-letter-from-user">${a.phoneNumber}</p><br>
-            <hr>
-             <p class="approved-letter-subject"><strong>Subject:</strong> ${a.subject}</p>
-            
-            
-            <p class="approved-letter-body">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${a.body}</p>
-            <div class="status-div-pending">Pending</div>
-            <div class="stage-div">Current Stage: ${a.stage}</div>
+function loadPending(apps) {
+  const pending = apps.filter(app => app.status === "pending");
+  const container = document.getElementById("pending");
 
-            </div>
+  if (pending.length === 0) {
+    container.innerHTML = `<p class="approved-letter-div">No pending letters.</p>`;
+    return;
+  }
 
+  container.innerHTML = pending.map(a => `
+    <div class="approved-letter-div">
+      <p><strong>From:</strong><br><br> ${a.name}</p>
+      <p>${a.department} &nbsp; ${a.year}</p>
+      <p>${a.studentEmail}</p>
+      <p>${a.phoneNumber}</p><br>
+      <hr><br>
+      <p><strong>Subject:</strong> ${a.subject}</p>
+      <p class="approved-letter-body">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ${a.content}</p>
+      <div class="status-div-pending">Pending</div>
+      <div class="stage-div">Current Stage: ${a.stage}</div>
+    </div>
+  `).join("");
+}
 
-            `
-            
-            ).join("");
+function loadRejected(apps) {
+  const rejected = apps.filter(app => app.status === "rejected");
+  const container = document.getElementById("rejected");
 
+  if (rejected.length === 0) {
+    container.innerHTML = `<p class="approved-letter-div">No rejected letters.</p>`;
+    return;
+  }
 
-      };
+  container.innerHTML = rejected.map(a => `
+    <div class="approved-letter-div">
+      <p><strong>From:</strong><br><br> ${a.name}</p>
+      <p>${a.department} &nbsp; ${a.year}</p>
+      <p>${a.studentEmail}</p>
+      <p>${a.phoneNumber}</p><br>
+      <hr><br>
+      <p><strong>Subject:</strong> ${a.subject}</p>
+      <p class="approved-letter-body">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;${a.content}</p>
+      <div class="status-div-rejected">Rejected at stage: ${a.stage}</div>
+    </div>
+  `).join("");
+}
 
+function downloadPDF(index, type) {
+  // Get all applications from the DOM-rendered list
+  const token = localStorage.getItem("token");
 
-
-      function loadRejected(){
-        let apps = JSON.parse(localStorage.getItem("applications")) || [];
-
-        let rejected = apps.filter(app => app.stage === "completed" && app.status === "Rejected");
-        
-        let container = document.getElementById("rejected");
-        
-        if (rejected.length === 0) {
-        container.innerHTML = `<p class="approved-letter-div">No rejected letters .</p>`;
-        return;
-        }
-        
-        
-
-        container.innerHTML = rejected.map((a, index) => `
-            <div class="approved-letter-div">
-            <p class="approved-letter-from"><strong>From:</strong></p><br>
-            <p class="approved-letter-from-user">${a.name}</p><br>
-            <p class="approved-letter-from-user">${a.department} &nbsp; ${a.year}</p><br>
-            <p class="approved-letter-from-user">${a.email}</p><br>
-            <p class="approved-letter-from-user">${a.phoneNumber}</p><br>
-            <hr>
-             <p class="approved-letter-subject"><strong>Subject:</strong> ${a.subject}</p>
-            
-            
-            <p class="approved-letter-body">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${a.body}</p>
-            
-            <div class="status-div-rejected"> Rejected by ${a.rejectedAtStage || "Unknown"}</div>
-            </div>
-
-            `
-            ).join("");
-      };
-
-
-      function downloadPDF(index) {
-          let apps = JSON.parse(localStorage.getItem("applications")) || [];
-
-          let approved = apps.filter(
-            app => app.stage === "completed" && app.status === "Approved"
-          );
-
-          let a = approved[index];
-          if (!a) {
-            alert("Letter not found");
-            return;
-          }
-
-          const { jsPDF } = window.jspdf;
-          const doc = new jsPDF();
-
-          // ===== HEADER =====
-          doc.setFont("times", "bold");
-          doc.setFontSize(18);
-          doc.text("APPROVAL LETTER", 105, 20, { align: "center" });
-
-          doc.setLineWidth(0.5);
-          doc.line(20, 25, 190, 25);
-
-          // ===== DATE =====
-          doc.setFont("times", "normal");
-          doc.setFontSize(11);
-          doc.text(`Date: ${new Date().toLocaleDateString()}`, 150, 35);
-
-          // ===== FROM DETAILS =====
-          doc.setFontSize(12);
-          doc.setFont("times", "bold");
-          doc.text("From:", 20, 50);
-
-          doc.setFont("times", "normal");
-          doc.text(a.name, 20, 58);
-          doc.text(a.department, 20, 65);
-          doc.text(a.year, 20, 72);
-          doc.text(a.email, 20, 79);
-          doc.text(a.phoneNumber, 20, 86);
-
-          // ===== SUBJECT =====
-          doc.setFont("times", "bold");
-          doc.text("Subject:", 20, 100);
-          doc.setFont("times", "normal");
-          doc.text(a.subject, 40, 100);
-
-          // ===== BODY =====
-          let bodyText = doc.splitTextToSize(a.body, 170);
-          doc.text(bodyText, 20, 115);
-
-          // ===== APPROVAL IMAGE (STAMP / SEAL) =====
-          const img = new Image();
-          img.src = "approval-image-1.png"; // make sure this path exists
-
-          img.onload = function () {
-            // fixed position near bottom-right
-            const pageHeight = doc.internal.pageSize.getHeight();
-            doc.addImage(img, "PNG", 130, pageHeight - 100, 50, 50);
-            doc.save(`Approved_Letter_${a.name}.pdf`);
-          };
-
-          img.onerror = function () {
-            // fallback if image not found
-            doc.setFontSize(10);
-            doc.text("APPROVED", 150, finalY + 20);
-            doc.save(`Approved_Letter_${a.name}.pdf`);
-          };
-        }
-     
-      
-
-      function showTab(tabId) {
-      const contents = document.querySelectorAll('.messages');
-      contents.forEach(item => item.style.display = 'none');
-
-      document.getElementById(tabId).style.display = 'block';
-      
+  fetch("http://localhost:4000/api/applications", {
+    headers: { "Authorization": `Bearer ${token}` }
+  })
+    .then(resp => resp.json())
+    .then(apps => {
+      let selected;
+      if (type === "approved") {
+        const approved = apps.filter(app => app.status === "approved");
+        selected = approved[index];
+      } else if (type === "rejected") {
+        const rejected = apps.filter(app => app.status === "rejected");
+        selected = rejected[index];
+      } else {
+        const pending = apps.filter(app => app.status === "pending");
+        selected = pending[index];
       }
-      function showSidebar() {
+
+      if (!selected) {
+        alert("Letter not found");
+        return;
+      }
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      // ===== HEADER =====
+      doc.setFont("times", "bold");
+      doc.setFontSize(18);
+      doc.text("APPLICATION LETTER", 105, 20, { align: "center" });
+
+      doc.setLineWidth(0.5);
+      doc.line(20, 25, 190, 25);
+
+      // ===== DATE =====
+      doc.setFont("times", "normal");
+      doc.setFontSize(11);
+      doc.text(`Date: ${new Date().toLocaleDateString()}`, 150, 35);
+
+      // ===== FROM DETAILS =====
+      doc.setFontSize(12);
+      doc.setFont("times", "bold");
+      doc.text("From:", 20, 50);
+
+      doc.setFont("times", "normal");
+      doc.text(selected.name || "", 20, 58);
+      doc.text(selected.department || "", 20, 65);
+      doc.text(selected.year || "", 20, 72);
+      doc.text(selected.studentEmail || "", 20, 79);
+      doc.text(selected.phoneNumber || "", 20, 86);
+
+      // ===== SUBJECT =====
+      doc.setFont("times", "bold");
+      doc.text("Subject:", 20, 100);
+      doc.setFont("times", "normal");
+      doc.text(selected.subject || "", 40, 100);
+
+      // ===== BODY =====
+      let bodyText = doc.splitTextToSize(selected.content || "", 170);
+      doc.text(bodyText, 20, 115);
+
+      // ===== APPROVAL STAMP =====
+      if (type === "approved") {
+        const img = new Image();
+        img.src = "approval-image-1.png"; // ensure this file exists
+
+        img.onload = function () {
+          const pageHeight = doc.internal.pageSize.getHeight();
+          doc.addImage(img, "PNG", 130, pageHeight - 100, 50, 50);
+          doc.save(`Application_${selected.name}.pdf`);
+        };
+
+        img.onerror = function () {
+          doc.setFontSize(10);
+          doc.text("APPROVED", 150, 250);
+          doc.save(`Application_${selected.name}.pdf`);
+        };
+      } else {
+        doc.save(`Application_${selected.name}.pdf`);
+      }
+    })
+    .catch(err => {
+      console.error("Error generating PDF:", err);
+      alert("Failed to generate PDF");
+    });
+}
+
+function showTab(tabId) {
+  const contents = document.querySelectorAll(".messages");
+  contents.forEach(item => item.style.display = "none");
+  document.getElementById(tabId).style.display = "block";
+}
+
+// Run on page load
+loadApplications();
+
+
+
+
+function showSidebar() {
             const sideBar = document.querySelector('.side-bar');
             sideBar.style.display = 'flex';
         }
@@ -301,7 +304,7 @@
             const sideBar = document.querySelector('.side-bar');
             sideBar.style.display = 'none';
         }
-      
-    </script>
+</script>
+
   </body>
 </html>

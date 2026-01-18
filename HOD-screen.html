@@ -44,7 +44,7 @@
 
 
 
-
+    <div class="tab-main">
     <div class="status-tabs"> 
       <div class="tab tab-pending" onclick="showTab('pending')">
         <p>Pending</p>
@@ -89,92 +89,58 @@
 
 
 
-   function loadHODHistory() {
-    let apps = JSON.parse(localStorage.getItem("applications")) || [];;
+   
+async function loadHODPending() 
+{ 
+  const token = localStorage.getItem("token"); 
+const resp = await fetch("http://localhost:4000/api/applications/hod/pending", { headers: { "Authorization": `Bearer ${token}` } }); 
+const apps = await resp.json(); 
+renderMessages("pending", apps, "Pending"); 
+}
+async function loadHODApproved() 
+{ 
+  const token = localStorage.getItem("token"); 
+  const resp = await fetch("http://localhost:4000/api/applications/hod/approved", { headers: { "Authorization": `Bearer ${token}` } }); 
+  const apps = await resp.json();
+   renderMessages("approved", apps, "Approved"); 
+  } 
+  async function loadHODRejected() 
+  {
+     const token = localStorage.getItem("token"); 
+     const resp = await fetch("http://localhost:4000/api/applications/hod/rejected", { headers: { "Authorization": `Bearer ${token}` } }); 
+     const apps = await resp.json(); 
+     renderMessages("rejected", apps, "Rejected"); 
+    } 
+    function renderMessages(tabId, apps, statusLabel) 
+    { 
+      document.getElementById(tabId).innerHTML = apps.length === 0 ? 
+      `<p class="approved-letter-div">No ${statusLabel.toLowerCase()} letters.</p>` : apps.map(a => ` <div class="approved-letter-div"> <p><strong>From:</strong><br><br> ${a.name}</p> <p>${a.department} &nbsp; ${a.year}</p> <p>${a.studentEmail}</p> <p>${a.phoneNumber}</p><br> <hr><br> <p><strong>Subject:</strong> ${a.subject}</p> <p class="approved-letter-body">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;${a.content}</p> <div class="status-div-${statusLabel.toLowerCase()}">${statusLabel}</div> ${statusLabel === "Pending" ? ` <div class="approve-reject-button-div"> <button onclick="updateStatus('${a._id}', 'approve')" class="approve-button">Send to Principal</button> <button onclick="updateStatus('${a._id}', 'reject')" class="reject-button">Reject</button> </div>` : ""} </div>`).join(""); }
 
-    let pending = apps.filter(app => app.stage === "HOD" && app.status === "Pending" );
-        
-        document.getElementById("pending").innerHTML = pending.length === 0 ? "<p>No pending letters.</p>" : pending.map(a => `
-            <div class="approved-letter-div">
-            <p class="approved-letter-from"><strong>From:</strong></p><br>
-            <p class="approved-letter-from-user">${a.name}</p><br>
-            <p class="approved-letter-from-user">${a.department} &nbsp; ${a.year}</p><br>
-            <p class="approved-letter-from-user">${a.email}</p><br>
-            <p class="approved-letter-from-user">${a.phoneNumber}</p><br>
-            <hr>
-             <p class="approved-letter-subject"><strong>Subject:</strong> ${a.subject}</p>
-            
-            
-            <p class="approved-letter-body">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${a.body}</p>
-            <div class="status-div-pending">Pending</div>
-            <div class="approve-reject-button-div">
-              <button onclick="updateStatus(${a.id}, 'Approved')" class="approve-button">Send to Principal</button>
-              <button onclick="updateStatus(${a.id}, 'Rejected')" class="reject-button">Reject</button>
-            </div>
+function showTab(tabId) {
+  document.querySelectorAll(".messages").forEach(div => (div.style.display = "none"));
+  document.getElementById(tabId).style.display = "block";
+}
 
-            </div>
+// Run on page load
+loadHODPending(); 
+loadHODApproved(); 
+loadHODRejected(); 
+showTab("pending");
 
-
-            `
-            
-            ).join("");
-
-
-        let rejected = apps.filter(app => app.stage === "completed" && app.status === "Rejected" && app.rejectedAtStage === "HOD");
-        
-        document.getElementById("rejected").innerHTML = rejected.length === 0 ? "<p>No rejected letters.</p>" : 
-        rejected.map(a => `
-           <div class="approved-letter-div">
-            <p class="approved-letter-from"><strong>From:</strong></p><br>
-            <p class="approved-letter-from-user">${a.name}</p><br>
-            <p class="approved-letter-from-user">${a.department} &nbsp; ${a.year}</p><br>
-            <p class="approved-letter-from-user">${a.email}</p><br>
-            <p class="approved-letter-from-user">${a.phoneNumber}</p><br>
-            <hr>
-             <p class="approved-letter-subject"><strong>Subject:</strong> ${a.subject}</p>
-            
-            
-            <p class="approved-letter-body">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${a.body}</p>
-            
-            <div class="status-div-rejected">Rejected</div>
-            </div>
-
-            `
-            ).join("");
-
-
-            let approved = apps.filter(app => app.stage === "Principal" && app.status === "Pending"); 
-            document.getElementById("approved").innerHTML = approved.length === 0 ? "<p>No approved letters.</p>" : 
-            approved.map(a => `<div class="approved-letter-div">
-            <p class="approved-letter-from"><strong>From:</strong></p><br>
-            <p class="approved-letter-from-user">${a.name}</p><br>
-            <p class="approved-letter-from-user">${a.department} &nbsp; ${a.year}</p><br>
-            <p class="approved-letter-from-user">${a.email}</p><br>
-            <p class="approved-letter-from-user">${a.phoneNumber}</p><br>
-            <hr>
-             <p class="approved-letter-subject"><strong>Subject:</strong> ${a.subject}</p>
-            
-            
-            <p class="approved-letter-body">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${a.body}</p>
-            
-            <div class="status-div-approved">Approved</div>
-            </div>
-
-            `
-            ).join("");
-      
-  }
-
-
-
-
-  function showTab(tabId) { document.querySelectorAll('.messages').forEach(div => div.style.display = 'none'); 
-  document.getElementById(tabId).style.display = 'block'; 
-  }
-      
-
-  loadHODHistory();
-      showTab('pending');
+async function updateStatus(id, action) { 
+  const token = localStorage.getItem("token"); 
+  try { const resp = await fetch(`http://localhost:4000/api/applications/${id}/status`, { method: "PATCH", headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` }, body: JSON.stringify({ action }) }); 
+  const data = await resp.json(); 
+  if (!resp.ok) { alert(data.error || "Failed to update status"); 
+  return; } 
+  alert(`Application ${action}d successfully`); 
+  loadHODPending(); 
+  loadHODApproved(); 
+  loadHODRejected();
+   } catch (err) { console.error("Error updating status:", err); 
+   alert("Failed to update status"); 
+   } 
+   }
 </script>
 </body>
 </html>

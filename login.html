@@ -32,10 +32,7 @@
       margin: 0;
     }
 
-    .email-input-box{
     
-
-    }
 
     .email-input-box,
     .password-input-box{
@@ -117,38 +114,45 @@
   </div>
 
   <script>
-    function login() {
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
+    async function login() {
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
 
-      if (!email || !password) {
-        alert("Please enter email and password");
-        return;
-      }
+  try {
+    const resp = await fetch('http://localhost:4000/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
 
-      const STAFF_PASSWORD = "staff@123";
-      
-      if (email === "advisor@college.edu" && password === STAFF_PASSWORD) {
-        localStorage.setItem("role", "advisor");
-        localStorage.setItem("email", email);
-        window.location.href = "advisor-screen.html";
-      }
-      else if (email === "hod@college.edu" && password === STAFF_PASSWORD) {
-        localStorage.setItem("role", "hod");
-        localStorage.setItem("email", email);
-        window.location.href = "HOD-screen.html";
-      }
-      else if (email === "principal@college.edu" && password === STAFF_PASSWORD) {
-        localStorage.setItem("role", "principal");
-        localStorage.setItem("email", email);
-        window.location.href = "principal.html";
-      }
-      else {
-        localStorage.setItem("role", "student");
-        localStorage.setItem("email", email);
-        window.location.href = "home-page-main.html";
-      }
+    let data;
+    try {
+      data = await resp.json();
+    } catch {
+      alert("Server did not return valid JSON");
+      return;
     }
+
+    if (!resp.ok) {
+      alert(data.error || 'Login failed');
+      return;
+    }
+
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('role', data.role);
+    localStorage.setItem('email', data.email);
+
+    if (data.role === 'advisor') window.location.href = 'advisor-screen.html';
+    else if (data.role === 'hod') window.location.href = 'HOD-screen.html';
+    else if (data.role === 'principal') window.location.href = 'principal.html';
+    else window.location.href = 'home-page-main.html';
+
+  } catch (err) {
+    alert("Network error: " + err.message);
+  }
+}
+
+
   </script>
 
 

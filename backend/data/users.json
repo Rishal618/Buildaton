@@ -1,0 +1,5 @@
+[
+  { "email": "advisor@college.edu", "role": "advisor", "password": "advisor123" },
+  { "email": "hod@college.edu", "role": "hod", "password": "hod123" },
+  { "email": "principal@college.edu", "role": "principal", "password": "principal123" }
+]

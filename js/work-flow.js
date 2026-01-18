@@ -1,61 +1,38 @@
 
-const stages = ["Advisor", "HOD", "Principal", "completed"];
-
-
-function getApps() {
-  return JSON.parse(localStorage.getItem("applications")) || [];
+async function fetchApps() {
+  const token = localStorage.getItem('token');
+  const resp = await fetch('http://localhost:4000/api/applications', {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  return await resp.json();
 }
 
 
-function saveApps(apps) {
-  localStorage.setItem("applications", JSON.stringify(apps));
-}
 
+async function updateStatus(id, action) {
+  const token = localStorage.getItem('token');
 
-function updateStatus(id, action) {
-  let apps = getApps();
-
-  apps = apps.map(app => {
-    if (app.id !== id) {
-      return app;
-    }
-
-    if (app.status === "Rejected" || app.status === "Approved") {
-      return app; 
-    }
-
-    if (action === "Rejected") {
-      const originalStage = app.stage;
-      return {...app, 
-      stage: "completed", 
-      status: "Rejected", 
-      rejectedAtStage: originalStage,
-      updatedAt: Date.now()};
-    }
-
-    const currentIndex = stages.indexOf(app.stage);
-    if (currentIndex === -1) return app; 
-
-    const nextStage = stages[currentIndex + 1] || "completed";
-    const status = nextStage === "completed" ? "Approved" : "Pending";
-
-    return {...app, stage: nextStage, status, updatedAt: Date.now()};
+  const resp = await fetch(`http://localhost:4000/api/applications/${id}/status`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({ action })
   });
 
-  saveApps(apps);
-
-  const appDiv = document.getElementById(`app-${id}`); if (appDiv) { 
-    appDiv.remove(); 
-    const container = document.getElementById("applications"); 
-    if (container && container.children.length === 0) { 
-      container.innerHTML = "<p class=\"no-applications\">No applications available.</p>";
-  } 
+  const updated = await resp.json();
+  if (!resp.ok) {
+    alert(updated.error || 'Update failed');
+    return;
   }
 
-  if (typeof loadHODHistory === "function") { loadHODHistory(); }
-  if (typeof loadAdvisorHistory === "function") { loadAdvisorHistory(); }
-  if (typeof loadPrincipalHistory === "function") { loadPrincipalHistory(); }
+  // Re-render your lists
+  loadAdvisorHistory?.();
+  loadHODHistory?.();
+  loadPrincipalHistory?.();
 }
+
 
 
 function renderApplications(stage, containerId) {

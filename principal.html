@@ -44,6 +44,10 @@
         </ul>
     </nav>
 
+
+
+
+    <div class="tab-main">
     <div class="status-tabs"> 
       <div class="tab tab-pending" onclick="showTab('pending')">
         <p>Pending</p>
@@ -74,96 +78,98 @@
 <script src="js/work-flow.js"></script>
 <script>
   function showSidebar() {
-            const sideBar = document.querySelector('.side-bar');
-            sideBar.style.display = 'flex';
-        }
-        function hideSidebar() {
-            const sideBar = document.querySelector('.side-bar');
-            sideBar.style.display = 'none';
-        }
-  
-  
-  function loadPrincipalHistory() {
-    let apps = JSON.parse(localStorage.getItem("applications")) || [];
-    let pending = apps.filter(app => app.stage === "Principal" && app.status === "Pending" );
-        
-        document.getElementById("pending").innerHTML = pending.length === 0 ? "<p>No pending letters.</p>" : pending.map(a => `
-            <div class="approved-letter-div">
-            <p class="approved-letter-from"><strong>From:</strong></p><br>
-            <p class="approved-letter-from-user">${a.name}</p><br>
-            <p class="approved-letter-from-user">${a.department} &nbsp; ${a.year}</p><br>
-            <p class="approved-letter-from-user">${a.email}</p><br>
-            <p class="approved-letter-from-user">${a.phoneNumber}</p><br>
-            <hr>
-             <p class="approved-letter-subject"><strong>Subject:</strong> ${a.subject}</p>
-            
-            
-            <p class="approved-letter-body">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${a.body}</p>
-            <div class="status-div-pending">Pending</div>
-            <div class="approve-reject-button-div">
-              <button onclick="updateStatus(${a.id}, 'Approved')" class="approve-button">Approve</button>
-              <button onclick="updateStatus(${a.id}, 'Rejected')" class="reject-button">Reject</button>
-            </div>
-
-            </div>
-
-
-            `
-            
-            ).join("");
-
-
-        let rejected = apps.filter(app => app.stage === "completed" && app.status === "Rejected" && app.rejectedAtStage === "Principal");
-        
-        document.getElementById("rejected").innerHTML = rejected.length === 0 ? "<p>No rejected letters.</p>" : 
-        rejected.map(a => `
-           <div class="approved-letter-div">
-            <p class="approved-letter-from"><strong>From:</strong></p><br>
-            <p class="approved-letter-from-user">${a.name}</p><br>
-            <p class="approved-letter-from-user">${a.department} &nbsp; ${a.year}</p><br>
-            <p class="approved-letter-from-user">${a.email}</p><br>
-            <p class="approved-letter-from-user">${a.phoneNumber}</p><br>
-            <hr>
-             <p class="approved-letter-subject"><strong>Subject:</strong> ${a.subject}</p>
-            
-            
-            <p class="approved-letter-body">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${a.body}</p>
-            
-            <div class="status-div-rejected">Rejected</div>
-            </div>
-
-            `
-            ).join("");
-
-
-            let approved = apps.filter(app => app.stage === "completed" && app.status === "Approved"); 
-            document.getElementById("approved").innerHTML = approved.length === 0 ? "<p>No approved letters.</p>" : 
-            approved.map(a => `<div class="approved-letter-div">
-            <p class="approved-letter-from"><strong>From:</strong></p><br>
-            <p class="approved-letter-from-user">${a.name}</p><br>
-            <p class="approved-letter-from-user">${a.department} &nbsp; ${a.year}</p><br>
-            <p class="approved-letter-from-user">${a.email}</p><br>
-            <p class="approved-letter-from-user">${a.phoneNumber}</p><br>
-            <hr>
-             <p class="approved-letter-subject"><strong>Subject:</strong> ${a.subject}</p>
-            
-            
-            <p class="approved-letter-body">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${a.body}</p>
-            
-            <div class="status-div-approved">Approved</div>
-            </div>
-
-            `
-            ).join("");
-      
+    document.querySelector('.side-bar').style.display = 'flex';
+  }
+  function hideSidebar() {
+    document.querySelector('.side-bar').style.display = 'none';
   }
 
-  function showTab(tabId) { document.querySelectorAll('.messages').forEach(div => div.style.display = 'none'); 
-  document.getElementById(tabId).style.display = 'block'; 
+  async function loadPrincipalPending() {
+    const token = localStorage.getItem("token");
+    const resp = await fetch("http://localhost:4000/api/applications/principal/pending", {
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+    const apps = await resp.json();
+    renderMessages("pending", apps, "Pending");
   }
-  loadPrincipalHistory(); 
-  showTab('pending');
 
+  async function loadPrincipalApproved() {
+    const token = localStorage.getItem("token");
+    const resp = await fetch("http://localhost:4000/api/applications/principal/approved", {
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+    const apps = await resp.json();
+    renderMessages("approved", apps, "Approved");
+  }
+
+  async function loadPrincipalRejected() {
+    const token = localStorage.getItem("token");
+    const resp = await fetch("http://localhost:4000/api/applications/principal/rejected", {
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+    const apps = await resp.json();
+    renderMessages("rejected", apps, "Rejected");
+  }
+
+  function renderMessages(tabId, apps, statusLabel) {
+    document.getElementById(tabId).innerHTML =
+      apps.length === 0
+        ? `<p class="approved-letter-div">No ${statusLabel.toLowerCase()} letters.</p>`
+        : apps.map(a => `
+          <div class="approved-letter-div">
+            <p><strong>From:</strong><br><br> ${a.name}</p>
+            <p>${a.department} &nbsp; ${a.year}</p>
+            <p>${a.studentEmail}</p>
+            <p>${a.phoneNumber}</p><br>
+            <hr><br>
+            <p><strong>Subject:</strong> ${a.subject}</p>
+            <p class="approved-letter-body">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;${a.content}</p>
+            <div class="status-div-${statusLabel.toLowerCase()}">${statusLabel}</div>
+            ${statusLabel === "Pending" ? `
+              <div class="approve-reject-button-div">
+                <button onclick="updateStatus('${a._id}', 'approve')" class="approve-button">Approve</button>
+                <button onclick="updateStatus('${a._id}', 'reject')" class="reject-button">Reject</button>
+              </div>` : ""}
+          </div>`).join("");
+  }
+
+  function showTab(tabId) {
+    document.querySelectorAll(".messages").forEach(div => div.style.display = "none");
+    document.getElementById(tabId).style.display = "block";
+  }
+
+  // Run on page load
+  loadPrincipalPending();
+  loadPrincipalApproved();
+  loadPrincipalRejected();
+  showTab("pending");
+
+  async function updateStatus(id, action) {
+    const token = localStorage.getItem("token");
+    try {
+      const resp = await fetch(`http://localhost:4000/api/applications/${id}/status`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ action })
+      });
+      const data = await resp.json();
+      if (!resp.ok) {
+        alert(data.error || "Failed to update status");
+        return;
+      }
+      alert(`Application ${action}d successfully`);
+      loadPrincipalPending();
+      loadPrincipalApproved();
+      loadPrincipalRejected();
+    } catch (err) {
+      console.error("Error updating status:", err);
+      alert("Failed to update status");
+    }
+  }
 </script>
+
  </body>
 </html> 

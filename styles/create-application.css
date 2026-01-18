@@ -1,14 +1,71 @@
+    
+    *{
+      margin: 0px;
+      padding: 0px;
+    }
+    
     body{
-      display: flex;
-      flex-direction: column;
-      justify-content: center; 
-      align-items: stretch;
-      font-family: Tahoma;
       
-      background-color:rgb(214, 212, 212) ; 
-      min-height: 100vh;
+      font-family: Tahoma;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
+
+
+    .hero{
+      min-height: 100vh;
+      background-image: url("../Home-Background.png");
+      background-repeat: no-repeat;
+      background-position: right center;
+      background-size: cover;
+      display: flex;
+      align-items: center;
+      padding: 60px;
+    }
+    .hero-heading{
+      font-family: 'Segoe UI', 'Poppins', sans-serif;
+      font-size: 36px;
+      font-weight: 800;
+      margin-bottom: 20px;
+      color: #000000;
+    }
+    .hero-para{
+      font-family: 'Segoe UI', 'Poppins', sans-serif;
+      font-size: 15px;
+      color: #000000;
+      max-width: 600px;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    .hero-content {
+      max-width:500px ;
+    }
+    @media (max-width: 768px) {
+  .hero {
+    background-position: none ;
+    background-size: cover;
+    padding: 20px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  .hero-para{
+    font-weight: 600;
+  }
+  
+
+  .hero-content {
+    margin-top: 10px; 
+    max-width: 500px;
+  }
+}
+
+
+    .create-application-main-div{
+      margin-top: 70px;
+      
+     
+    }
+
     .logo{
       width: 300px;
       height: auto;
@@ -70,9 +127,11 @@
       align-content: center;
       gap: 4px;
       background-color: rgb(255, 255, 255);
-      border-radius: 18px;
-      margin-left: 50px;
-      margin-right: 50px;
+      border-radius: 10px;
+      margin-left: 10px;
+      margin-right: 10px;
+      box-shadow: 3px 3px 5px 5px rgba(0, 0, 0, 0.2);
+      margin-bottom: 20px;
     }
     .from-div{
       background-color: rgb(255, 255, 255);
@@ -80,6 +139,7 @@
       flex-direction: column;
       width: 100%;
       border-radius: 18px;
+      
       
     }
     .subject-div{
@@ -105,8 +165,8 @@
       font-size: 16px;
       margin-left: 20px;
       margin-right: 20px;
-      border: solid;
-      border-radius: 18px;
+      border: solid 2px;
+      border-radius: 10px;
       border-color: rgb(141, 141, 141);
       
     }
@@ -116,9 +176,10 @@
       padding-left: 20px;
       margin-left: 20px;
       margin-right: 20px;
-      border: solid;
-      border-radius: 18px;
+      border: solid 2px;
+      border-radius: 10px;
       border-color: rgb(141, 141, 141);
+      
     }
     
     
@@ -127,9 +188,10 @@
       font-size: 16px;
       margin-left: 20px;
       margin-right: 20px;
-      border: solid;
-      border-radius: 18px;
+      border: solid 2px;
+      border-radius: 10px;
       border-color: rgb(141, 141, 141);
+      padding-left: 20px;
     }
     .label-from{
       font-weight: 600;
@@ -161,10 +223,10 @@
     }
     .request-button-div{
       display: flex;
-      justify-content: center;
+      justify-content: flex-start;
     }
     #form{
-      display: none;
+      display: flex;
     }
     .submit-button-div{
       display: flex;
@@ -378,8 +440,8 @@
 .continue-application {
   --color: #fff;
   --background: #404660;
-  --background-hover: #3A4059;
-  --background-left: #2B3044;
+      --background-hover: #3A4059;
+      --background-left: #2B3044;
   --eye-outline: #F3E9CB;
   --eye-iris: #50cfe9;
 
@@ -418,7 +480,7 @@
 /* Eye Outline */
 .eye-outline {
   stroke: var(--eye-outline);
-  stroke-width: 3;
+  stroke-width: 4;
   fill: none;
 }
 

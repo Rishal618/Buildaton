@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>
+      Create Application
+    </title>
+    <link rel="stylesheet" type="text/css" href="styles/create-application.css">
+    <link rel="stylesheet" type="text/css" href="styles/navbar.css">
+
+
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Acme&display=swap" rel="stylesheet">
+
+
+
+
+  </head>
+  <body>
+    
+    <nav>
+        <ul class="side-bar">
+            <li onclick=hideSidebar()><a href="#"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg></a></li>
+            <li><a href="home-page-main.html">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="login.html">Log out</a></li>
+        </ul>
+        <ul class="header">
+            <li><a href="#">
+              <div class="logo-text-div">
+                  Requesta
+                  <div class="logo-image-div"><img src="requesta-logo-navbar.png" style="width: 120px;"></div>
+                </div>
+              </a>
+            </li>
+            <h4>Create New Application</h4>
+            <li onclick=showSidebar()><a href="#"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/></svg></a></li>
+        </ul>
+    </nav>
+    
+    
+    
+    
+    
+    
+    
+    <div class="create-application-main-div">
+    <form id="form" class="flex-container form">
+      <div class="from-div">
+        <label class="label-from">Applicant Information</label><br>
+        <input class="from-input-box" type="text" placeholder="Enter your name" id="name" ><br>
+        <input class="from-input-box" type="text" placeholder="Name of the department" id="department"><br>
+        <select class="from-input-box" id="year" aria-placeholder="Select the year" style="color: rgb(88, 88, 88);">
+          <option value="" disabled selected >Select the year</option>
+          <option value="First Year">First Year</option>
+          <option value="Second Year">Second Year</option>
+          <option value="Third Year">Third Year</option>
+          <option value="Fourth Year">Fourth Year</option>
+        </select><br>
+        <input class="from-input-box" type="email" placeholder="Enter your email" id="email"><br>
+        <input class="from-input-box" type="number" placeholder="Enter your phone number" id="phoneNumber"><br>
+      </div>
+
+      <div class="subject-div">
+        <label class="label-subject">Application Details</label><br>
+        <input type="text" class="subject-text-area" id="subject" name="subject" placeholder="Subject"><br>
+      </div>
+      <div class="body-div">
+        <textarea class="body-text-area" id="body" name="name"required></textarea>
+      </div>
+      
+       <div class="submit-button-div">
+        <button onclick="
+        submitRequest();
+        " class="submit-button"> Submit
+        </button>
+       </div> 
+      
+    </form>
+    </div>
+
+
+
+  
+  <script>
+
+    function showSidebar() {
+            const sideBar = document.querySelector('.side-bar');
+            sideBar.style.display = 'flex';
+        }
+        function hideSidebar() {
+            const sideBar = document.querySelector('.side-bar');
+            sideBar.style.display = 'none';
+        }
+
+
+    
+
+    async function submitRequest(){
+  const token = localStorage.getItem('token');
+  if (!token) {
+    alert('Please login first');
+    return;
+  }
+
+  const payload = {
+    name: document.getElementById("name").value.trim(),
+    department: document.getElementById("department").value.trim(),
+    year: document.getElementById("year").value,
+    email: document.getElementById("email").value.trim(),
+    phoneNumber: document.getElementById("phoneNumber").value.trim(),
+    subject: document.getElementById("subject").value.trim(),
+    body: document.getElementById("body").value.trim()
+  };
+
+  const resp = await fetch('http://localhost:4000/api/applications', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify(payload)
+  });
+
+  const data = await resp.json();
+
+  if (!resp.ok) {
+    alert(data.error || 'Submission failed');
+    return;
+  }
+
+  alert('Application submitted');
+  document.getElementById("form").reset();
+  window.location.href = 'home-page-main.html';
+}
+  </script>
+    
+    
+  </body> 
+</html> 
